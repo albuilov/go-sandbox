@@ -6,16 +6,16 @@ import (
 	"sync/atomic"
 )
 
-// Run демонстрирует суммирование квадратов общим атомарным счётчиком.
+// Run считает сумму квадратов с помощью общего атомарного счётчика.
 func Run(workerCount int, nums []int) error {
-	fmt.Println("Worker Pool basic")
+	fmt.Println("Worker Pool: Basic")
 
 	res, err := pool(workerCount, nums)
 	if err != nil {
 		return fmt.Errorf("run basic worker pool: %w", err)
 	}
 
-	fmt.Println("Total sum: ", res)
+	fmt.Println("Total sum:", res)
 
 	return nil
 }
@@ -28,7 +28,8 @@ func pool(workerCount int, nums []int) (int, error) {
 	}
 
 	jobs := make(chan int)
-	// Несколько воркеров обновляют общую сумму, поэтому используем атомарное сложение.
+	// Несколько воркеров обновляют общую сумму,
+	// поэтому используем атомарное сложение.
 	sum := atomic.Int64{}
 
 	var wg sync.WaitGroup

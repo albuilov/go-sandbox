@@ -5,9 +5,9 @@ import (
 	"sync"
 )
 
-// Run демонстрирует сбор квадратов через канал и суммирование получателем.
+// Run собирает квадраты из канала и выводит их сумму.
 func Run(workerCount int, nums []int) error {
-	fmt.Println("Worker Pool with channel result")
+	fmt.Println("Worker Pool: Results")
 
 	res, err := pool(workerCount, nums)
 	if err != nil {
@@ -19,14 +19,14 @@ func Run(workerCount int, nums []int) error {
 		sum += num
 	}
 
-	fmt.Println("Total sum: ", sum)
+	fmt.Println("Total sum:", sum)
 
 	return nil
 }
 
 // pool запускает workerCount воркеров и возвращает канал квадратов переданных чисел.
 // Порядок результатов не гарантируется.
-// Вызывающий должен прочитать канал до конца, иначе воркеры заблокируются.
+// Нужно прочитать канал до конца, иначе воркеры останутся ждать отправки.
 // workerCount должен быть положительным.
 func pool(workerCount int, nums []int) (<-chan int, error) {
 	if workerCount < 1 {
@@ -51,7 +51,7 @@ func pool(workerCount int, nums []int) (<-chan int, error) {
 		wg.Wait()
 	}()
 
-	// Отправляем задания асинхронно, чтобы вызывающий мог начать читать результаты.
+	// Отправляем задания в отдельной горутине, чтобы сразу вернуть канал результатов.
 	go func() {
 		defer close(jobs)
 		for _, num := range nums {
