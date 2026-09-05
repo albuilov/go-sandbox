@@ -46,6 +46,3 @@ go run -race ./concurrency/workerpool
 go run -race ./concurrency/pipeline
 go run -race ./concurrency/semaphore
 ```
-
-Автоматические тесты пока есть только у семафоров.
-Запуски с `-race` проверяют гонки только в выполненных сценариях.
