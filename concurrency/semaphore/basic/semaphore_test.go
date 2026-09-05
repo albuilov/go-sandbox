@@ -30,7 +30,7 @@ func TestAcquireWaitsForRelease(t *testing.T) {
 			close(acquired)
 		}()
 
-		// Даем горутине дойти до ожидания места
+		// Даем горутине дойти до ожидания места.
 		synctest.Wait()
 
 		select {
@@ -51,7 +51,7 @@ func TestAcquireWaitsForRelease(t *testing.T) {
 		s.Release()
 		s.Release()
 
-		// Все места можно занять снова
+		// Все места можно занять снова.
 		s.Acquire()
 		s.Acquire()
 

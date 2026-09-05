@@ -11,12 +11,13 @@ import (
 func RunExample() {
 	fmt.Println("Semaphore: Weighted")
 
+	// Короткий таймаут для проверки отмены. Она может не успеть сработать.
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Millisecond)
 	defer cancel()
 
 	s, err := NewSemaphore(5)
 	if err != nil {
-		fmt.Printf("Semaphore weighted error: %v\n", err)
+		fmt.Println("error:", err)
 		return
 	}
 
@@ -28,7 +29,7 @@ func RunExample() {
 		// Ждем, пока освободится весь нужный вес, и только потом запускаем задачу.
 		fmt.Printf("task %d: waiting, weight = %d\n", taskID, weight)
 		if err := s.Acquire(ctx, weight); err != nil {
-			fmt.Printf("Semaphore Acquire error: %v\n", err)
+			fmt.Println("error:", err)
 			break
 		}
 
@@ -36,7 +37,7 @@ func RunExample() {
 			// Возвращаем столько же разрешений, сколько заняли.
 			defer func() {
 				if err := s.Release(weight); err != nil {
-					fmt.Printf("Semaphore Release error: %v\n", err)
+					fmt.Println("error:", err)
 				}
 			}()
 

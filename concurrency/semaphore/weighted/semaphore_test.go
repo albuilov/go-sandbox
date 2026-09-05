@@ -178,7 +178,7 @@ func TestAcquireWaitsForWholeWeight(t *testing.T) {
 		default:
 		}
 
-		// Одного освобожденного места еще недостаточно
+		// Одного освобожденного места еще недостаточно.
 		if err := s.Release(1); err != nil {
 			t.Fatal(err)
 		}

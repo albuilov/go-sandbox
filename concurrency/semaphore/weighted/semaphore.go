@@ -6,6 +6,9 @@ import (
 	"sync"
 )
 
+// Semaphore ограничивает общий вес одновременно выполняемых задач.
+// Создаем через NewSemaphore и не копируем после начала использования.
+// Очереди нет: небольшие задачи могут обгонять большие.
 type Semaphore struct {
 	mu      sync.Mutex
 	limit   int
@@ -13,6 +16,7 @@ type Semaphore struct {
 	changed chan struct{}
 }
 
+// NewSemaphore создает семафор с общим лимитом больше нуля.
 func NewSemaphore(limit int) (*Semaphore, error) {
 	if limit < 1 {
 		return nil, fmt.Errorf("limit must be positive, got %d", limit)
@@ -26,6 +30,8 @@ func NewSemaphore(limit int) (*Semaphore, error) {
 	return &s, nil
 }
 
+// Acquire ждет, пока хватит места для всего веса, или отменят ctx.
+// Вес должен быть от 1 до limit. При ошибке разрешения не заняты.
 func (s *Semaphore) Acquire(ctx context.Context, weight int) error {
 	if err := s.checkWeight(weight); err != nil {
 		return fmt.Errorf("acquire error: %w", err)
@@ -35,7 +41,7 @@ func (s *Semaphore) Acquire(ctx context.Context, weight int) error {
 		s.mu.Lock()
 
 		if err := ctx.Err(); err != nil {
-			s.mu.Lock()
+			s.mu.Unlock()
 			return err
 		}
 
@@ -61,6 +67,7 @@ func (s *Semaphore) Acquire(ctx context.Context, weight int) error {
 	}
 }
 
+// TryAcquire пытается занять весь вес без ожидания.
 func (s *Semaphore) TryAcquire(weight int) bool {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -69,10 +76,15 @@ func (s *Semaphore) TryAcquire(weight int) bool {
 		return false
 	}
 
+	if weight > s.limit-s.used {
+		return false
+	}
+
 	s.used += weight
 	return true
 }
 
+// Release возвращает указанный вес. Освобождаем только занятые разрешения.
 func (s *Semaphore) Release(weight int) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -81,9 +93,13 @@ func (s *Semaphore) Release(weight int) error {
 		return fmt.Errorf("release error: %w", err)
 	}
 
+	if weight > s.used {
+		return fmt.Errorf("release weight %d exceeds held weight %d", weight, s.used)
+	}
+
 	s.used -= weight
 
-	// Будем всех кто ждет изменения
+	// Будим всех, кто ждет освобождения разрешений.
 	close(s.changed)
 
 	// Новые ожидания будут использовать новый канал.

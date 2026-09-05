@@ -5,11 +5,9 @@ import (
 	"sync"
 )
 
-// Run запускает цепочку: числа → квадраты → чётные числа.
+// Pipeline запускает цепочку: числа → квадраты → четные числа.
 // Читаем результат до конца, чтобы не оставить горутины ждать отправки.
-func Run(workerCount int, nums []int) error {
-	fmt.Println("Pipeline: Basic")
-
+func Pipeline(workerCount int, nums []int) error {
 	// Проверяем число воркеров до запуска генератора.
 	if workerCount < 1 {
 		return fmt.Errorf("workerCount must be positive, got %d", workerCount)
@@ -64,7 +62,7 @@ func square(workerCount int, in <-chan int) <-chan int {
 	return out
 }
 
-// filterEven пропускает только чётные числа в том порядке, в котором получил их.
+// filterEven пропускает только четные числа в том порядке, в котором получил их.
 func filterEven(in <-chan int) <-chan int {
 	out := make(chan int)
 

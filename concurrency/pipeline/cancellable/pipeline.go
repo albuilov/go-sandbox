@@ -6,11 +6,9 @@ import (
 	"sync"
 )
 
-// Run запускает цепочку с отменой: числа → квадраты → чётные числа.
+// Pipeline запускает цепочку с отменой: числа → квадраты → четные числа.
 // Все этапы используют один контекст, чтобы при отмене остановить всю цепочку.
-func Run(ctx context.Context, workerCount int, nums []int) error {
-	fmt.Println("Pipeline: Cancellable")
-
+func Pipeline(ctx context.Context, workerCount int, nums []int) error {
 	// Проверяем число воркеров до запуска генератора.
 	if workerCount < 1 {
 		return fmt.Errorf("workerCount must be positive, got %d", workerCount)
@@ -79,8 +77,8 @@ func square(ctx context.Context, workerCount int, in <-chan int) <-chan int {
 	return out
 }
 
-// filterEven пропускает только чётные числа в том порядке, в котором получил их.
-// При отмене перестаём отправлять результаты.
+// filterEven пропускает только четные числа в том порядке, в котором получил их.
+// При отмене перестаем отправлять результаты.
 func filterEven(ctx context.Context, in <-chan int) <-chan int {
 	out := make(chan int)
 

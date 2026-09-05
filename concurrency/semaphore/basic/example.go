@@ -6,12 +6,13 @@ import (
 	"time"
 )
 
+// RunExample запускает десять задач с лимитом в четыре операции.
 func RunExample() {
 	fmt.Println("Semaphore: Basic")
 
 	s, err := NewSemaphore(4)
 	if err != nil {
-		fmt.Printf("Semaphore basic error: %v\n", err)
+		fmt.Println("error:", err)
 		return
 	}
 

@@ -2,7 +2,7 @@ package number
 
 import "math/rand"
 
-// GenerateNumbers создаёт count случайных чисел от min до max включительно.
+// GenerateNumbers создает count случайных чисел от min до max включительно.
 // Если count меньше или равен нулю, возвращает пустой слайс.
 func GenerateNumbers(count, min, max int) []int {
 	if count < 0 {
@@ -18,6 +18,7 @@ func GenerateNumbers(count, min, max int) []int {
 }
 
 // RandomNumber возвращает случайное число от min до max включительно.
+// Требуется min <= max, а размер диапазона max-min+1 должен помещаться в int.
 func RandomNumber(min, max int) int {
 	return rand.Intn(max-min+1) + min
 }

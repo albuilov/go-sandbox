@@ -5,10 +5,13 @@ import (
 	"fmt"
 )
 
+// Semaphore ограничивает число операций и позволяет отменить ожидание.
+// Создаем через NewSemaphore. Порядок получения мест не гарантируется.
 type Semaphore struct {
 	slots chan struct{}
 }
 
+// NewSemaphore создает семафор с лимитом больше нуля.
 func NewSemaphore(limit int) (*Semaphore, error) {
 	if limit < 1 {
 		return nil, fmt.Errorf("limit must be positive, got %d", limit)
@@ -21,6 +24,9 @@ func NewSemaphore(limit int) (*Semaphore, error) {
 	return &s, nil
 }
 
+// Acquire ждет свободное место или отмену ctx.
+// При ошибке место не занято, Release вызывать не нужно.
+// Если отмена совпала с получением места, метод может вернуть nil.
 func (s *Semaphore) Acquire(ctx context.Context) error {
 	if err := ctx.Err(); err != nil {
 		return err
@@ -34,6 +40,7 @@ func (s *Semaphore) Acquire(ctx context.Context) error {
 	}
 }
 
+// TryAcquire занимает место без ожидания. Если мест нет, возвращает false.
 func (s *Semaphore) TryAcquire() bool {
 	select {
 	case s.slots <- struct{}{}:
@@ -43,6 +50,8 @@ func (s *Semaphore) TryAcquire() bool {
 	}
 }
 
+// Release освобождает одно занятое место. Если занятых мест нет, возвращает ошибку.
+// Освобождаем место ровно один раз после успешного Acquire или TryAcquire.
 func (s *Semaphore) Release() error {
 	select {
 	case <-s.slots:

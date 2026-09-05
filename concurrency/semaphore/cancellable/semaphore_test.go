@@ -143,6 +143,6 @@ func TestReleaseWithoutAcquire(t *testing.T) {
 	}
 
 	if err := s.Release(); err == nil {
-		t.Error("Release without Acquire must panic")
+		t.Error("Release without Acquire must return an error")
 	}
 }
