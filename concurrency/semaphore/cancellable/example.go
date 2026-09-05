@@ -28,7 +28,11 @@ func RunExample() {
 		}
 
 		wg.Go(func() {
-			defer s.Release()
+			defer func() {
+				if err := s.Release(); err != nil {
+					fmt.Printf("Semaphore Release error: %v\n", err)
+				}
+			}()
 
 			fmt.Printf("task %d: start\n", taskID)
 			time.Sleep(time.Second)

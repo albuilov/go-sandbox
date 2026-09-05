@@ -43,10 +43,11 @@ func (s *Semaphore) TryAcquire() bool {
 	}
 }
 
-func (s *Semaphore) Release() {
+func (s *Semaphore) Release() error {
 	select {
 	case <-s.slots:
+		return nil
 	default:
-		panic("semaphore: release without acquire")
+		return fmt.Errorf("semaphore: release without acquire")
 	}
 }
