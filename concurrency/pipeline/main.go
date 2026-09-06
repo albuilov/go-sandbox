@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/albuilov/go-sandbox/concurrency/pipeline/basic"
 	"github.com/albuilov/go-sandbox/concurrency/pipeline/cancellable"
-	"github.com/albuilov/go-sandbox/internal/number"
+	"github.com/albuilov/go-sandbox/pkg/number"
 )
 
 // Отправляем случайные числа от 10 до 99 в канал.

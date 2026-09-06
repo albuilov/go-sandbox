@@ -4,7 +4,7 @@ import (
 	"github.com/albuilov/go-sandbox/concurrency/workerpool/basic"
 	"github.com/albuilov/go-sandbox/concurrency/workerpool/cancellable"
 	"github.com/albuilov/go-sandbox/concurrency/workerpool/results"
-	"github.com/albuilov/go-sandbox/internal/number"
+	"github.com/albuilov/go-sandbox/pkg/number"
 )
 
 // Раздаем числа воркерам, считаем квадраты и выводим их сумму.

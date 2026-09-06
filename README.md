@@ -35,7 +35,7 @@ go run ./concurrency/semaphore
 - `example.go` — сценарий демонстрации и вывод результата.
 - `workerpool.go`, `pipeline.go`, `semaphore.go` — реализации.
   WorkerPool и Pipeline выводят результаты внутри реализации.
-- `internal/number/` — общий генератор чисел для демонстраций.
+- `pkg/number` — общий генератор чисел для демонстраций.
 
 ## Проверки
 
