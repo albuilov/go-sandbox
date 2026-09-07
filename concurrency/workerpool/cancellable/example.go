@@ -15,7 +15,16 @@ func RunExample(workerCount int, nums []int) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Microsecond)
 	defer cancel()
 
-	if err := WorkerPool(ctx, workerCount, nums); err != nil {
+	val, err := WorkerPool(ctx, workerCount, nums)
+	if err != nil {
 		fmt.Println("error:", err)
+		return
 	}
+
+	var sum int
+	for num := range val {
+		sum += num
+	}
+
+	fmt.Println("Total sum:", sum)
 }

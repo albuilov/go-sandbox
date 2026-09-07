@@ -7,9 +7,9 @@ import (
 
 // WorkerPool считает и выводит сумму квадратов.
 // workerCount должен быть больше нуля.
-func WorkerPool(workerCount int, nums []int) error {
+func WorkerPool(workerCount int, nums []int) (<-chan int, error) {
 	if workerCount < 1 {
-		return fmt.Errorf("workerCount must be positive, got %d", workerCount)
+		return nil, fmt.Errorf("workerCount must be positive, got %d", workerCount)
 	}
 
 	out := make(chan int)
@@ -38,11 +38,5 @@ func WorkerPool(workerCount int, nums []int) error {
 		}
 	}()
 
-	var sum int
-	for num := range out {
-		sum += num
-	}
-
-	fmt.Println("Total sum:", sum)
-	return nil
+	return out, nil
 }

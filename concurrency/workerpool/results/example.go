@@ -8,7 +8,16 @@ import (
 func RunExample(workerCount int, nums []int) {
 	fmt.Println("Worker Pool: Results")
 
-	if err := WorkerPool(workerCount, nums); err != nil {
+	val, err := WorkerPool(workerCount, nums)
+	if err != nil {
 		fmt.Println("error:", err)
+		return
 	}
+
+	var sum int
+	for num := range val {
+		sum += num
+	}
+
+	fmt.Println("Total sum:", sum)
 }

@@ -9,9 +9,9 @@ import (
 // WorkerPool считает и выводит сумму квадратов.
 // workerCount должен быть больше нуля.
 // При отмене возвращает ошибку вместо вывода полной суммы.
-func WorkerPool(ctx context.Context, workerCount int, nums []int) error {
+func WorkerPool(ctx context.Context, workerCount int, nums []int) (<-chan int, error) {
 	if workerCount < 1 {
-		return fmt.Errorf("workerCount must be positive, got %d", workerCount)
+		return nil, fmt.Errorf("workerCount must be positive, got %d", workerCount)
 	}
 
 	out := make(chan int)
@@ -50,15 +50,9 @@ func WorkerPool(ctx context.Context, workerCount int, nums []int) error {
 		}
 	}()
 
-	var sum int
-	for num := range out {
-		sum += num
-	}
-
 	if err := ctx.Err(); err != nil {
-		return fmt.Errorf("run cancellable worker pool: %w", err)
+		return nil, fmt.Errorf("run cancellable worker pool: %w", err)
 	}
 
-	fmt.Println("Total sum:", sum)
-	return nil
+	return out, nil
 }
