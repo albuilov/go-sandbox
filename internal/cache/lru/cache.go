@@ -33,7 +33,7 @@ type lruCache[K comparable, V any] struct {
 // NewCache создает пустой кеш с заданной вместимостью
 // Вместимость должна быть больше нуля
 func NewCache[K comparable, V any](capacity int) (Cache[K, V], error) {
-	if capacity < 1 {
+	if capacity <= 0 {
 		return nil, fmt.Errorf("capacity must be positive, got %d", capacity)
 	}
 
