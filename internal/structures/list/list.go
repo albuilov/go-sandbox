@@ -1,57 +1,58 @@
 package list
 
 // List — двусвязный список с добавлением и переносом узлов в оба конца
-type List interface {
+type List[V any] interface {
 	Len() int
-	Front() *Item
-	Back() *Item
-	PushFront(v any) *Item
-	PushBack(v any) *Item
-	Remove(i *Item)
-	MoveToFront(i *Item)
-	MoveToBack(i *Item)
+	Front() *Item[V]
+	Back() *Item[V]
+	PushFront(v V) *Item[V]
+	PushBack(v V) *Item[V]
+	Remove(i *Item[V])
+	MoveToFront(i *Item[V])
+	MoveToBack(i *Item[V])
 }
 
 // Item — узел двусвязного списка
+// Value хранит значение того же типа, что и список
 // Next указывает на следующий узел, Prev — на предыдущий
 // Связи узла изменяются методами списка
-type Item struct {
-	Value any
-	Next  *Item
-	Prev  *Item
+type Item[V any] struct {
+	Value V
+	Next  *Item[V]
+	Prev  *Item[V]
 }
 
-type list struct {
-	head *Item
-	tail *Item
+type list[V any] struct {
+	head *Item[V]
+	tail *Item[V]
 	size int
 }
 
 // NewList создает пустой двусвязный список
-func NewList() List {
-	return &list{}
+func NewList[V any]() List[V] {
+	return &list[V]{}
 }
 
 // Len возвращает количество узлов в списке
-func (l *list) Len() int {
+func (l *list[V]) Len() int {
 	return l.size
 }
 
 // Front возвращает голову списка или nil, если список пуст
-func (l *list) Front() *Item {
+func (l *list[V]) Front() *Item[V] {
 	return l.head
 }
 
 // Back возвращает хвост списка или nil, если список пуст
-func (l *list) Back() *Item {
+func (l *list[V]) Back() *Item[V] {
 	return l.tail
 }
 
 // PushFront добавляет новое значение в начало списка и возвращает созданный узел
-func (l *list) PushFront(v any) *Item {
+func (l *list[V]) PushFront(v V) *Item[V] {
 	// ставим новый узел перед прежней головой
 	//	nil <— head => nil <— newItem <—> head
-	newItem := &Item{Value: v, Next: l.head}
+	newItem := &Item[V]{Value: v, Next: l.head}
 
 	if l.head != nil {
 		l.head.Prev = newItem
@@ -67,10 +68,10 @@ func (l *list) PushFront(v any) *Item {
 }
 
 // PushBack добавляет новое значение в конец списка и возвращает созданный узел
-func (l *list) PushBack(v any) *Item {
+func (l *list[V]) PushBack(v V) *Item[V] {
 	// ставим новый узел после прежнего хвоста
 	//	tail —> nil => tail <—> newItem —> nil
-	newItem := &Item{Value: v, Prev: l.tail}
+	newItem := &Item[V]{Value: v, Prev: l.tail}
 
 	if l.tail != nil {
 		l.tail.Next = newItem
@@ -87,7 +88,7 @@ func (l *list) PushBack(v any) *Item {
 
 // Remove удаляет узел из списка
 // Ненулевой i должен принадлежать этому списку
-func (l *list) Remove(i *Item) {
+func (l *list[V]) Remove(i *Item[V]) {
 	// передан nil или список пуст
 	if i == nil || l.size == 0 {
 		return
@@ -115,7 +116,7 @@ func (l *list) Remove(i *Item) {
 
 // MoveToFront переносит существующий узел в начало списка
 // Ненулевой i должен принадлежать этому списку
-func (l *list) MoveToFront(i *Item) {
+func (l *list[V]) MoveToFront(i *Item[V]) {
 	// передан nil или узел уже является головой
 	if i == nil || l.head == i {
 		return
@@ -146,7 +147,7 @@ func (l *list) MoveToFront(i *Item) {
 
 // MoveToBack переносит существующий узел в конец списка
 // Ненулевой i должен принадлежать этому списку
-func (l *list) MoveToBack(i *Item) {
+func (l *list[V]) MoveToBack(i *Item[V]) {
 	// передан nil или узел уже является хвостом
 	if i == nil || l.tail == i {
 		return
